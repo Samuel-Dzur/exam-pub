@@ -34,8 +34,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserWithOrdersResponse> getUserById(Long id) {
-        return userRepository.findById(id).map(this::toUserWithOrdersResponse);
+    public Optional<UserWithOrdersResponse> getUserByKeycloakId(String keycloakId) {
+        return userRepository.findByKeycloakId(keycloakId)
+            .map(this::toUserWithOrdersResponse);
     }
 
     @Transactional(readOnly = true)

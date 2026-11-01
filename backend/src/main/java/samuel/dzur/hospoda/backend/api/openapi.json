@@ -85,20 +85,19 @@
         }
       }
     },
-    "/users/{id}": {
+    "/users/{keycloakId}": {
       "get": {
         "tags": [
           "user-controller"
         ],
-        "operationId": "getUserById",
+        "operationId": "getUserByKeycloakId",
         "parameters": [
           {
-            "name": "id",
+            "name": "keycloakId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
@@ -113,7 +112,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/summary/user/{userId}": {
@@ -270,7 +274,8 @@
         "properties": {
           "birthDate": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "example": "2000-02-29"
           }
         }
       },
@@ -347,7 +352,10 @@
           "completed": {
             "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "completed"
+        ]
       },
       "UserOrderSummaryResponse": {
         "type": "object",

@@ -12,10 +12,11 @@ import {
 } from "react";
 import { LoaderCircle } from "lucide-react";
 import {
-  isUserRegistrationComplete,
+  getUserRegistrationStatus,
   submitUserRegistration,
 } from "@/lib/user-registration";
 import {
+  getKeycloakSubject,
   getKeycloakUsername,
   initializeKeycloak,
   loginWithKeycloak,
@@ -33,6 +34,7 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   register: (returnTo: string | null) => Promise<void>;
   status: AuthStatus;
+  keycloakSubject: string | null;
   username: string | null;
 }
 
@@ -54,12 +56,6 @@ function safeReturnPath(returnTo: string | null): string {
   return returnTo;
 }
 
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error
-    ? error.message
-    : "Při připojování k přihlašovací službě došlo k neznámé chybě.";
-}
-
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
   if (!context) {
@@ -75,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [registrationComplete, setRegistrationComplete] = useState<boolean | null>(null);
+  const [keycloakSubject, setKeycloakSubject] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -92,14 +89,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         setUsername(getKeycloakUsername());
-        const complete = await isUserRegistrationComplete();
+        setKeycloakSubject(getKeycloakSubject());
+        const registration = await getUserRegistrationStatus();
         if (mounted) {
-          setRegistrationComplete(complete);
+          setRegistrationComplete(registration.completed);
           setStatus("authenticated");
         }
-      } catch (initializationError: unknown) {
+      } catch {
         if (mounted) {
-          setError(getErrorMessage(initializationError));
+          setError(
+            "Při ověřování přihlášení došlo k chybě. Zkuste to prosím znovu.",
+          );
           setStatus("error");
         }
       }
@@ -155,8 +155,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ completeRegistration, error, login, logout, register, status, username }),
-    [completeRegistration, error, login, logout, register, status, username],
+    () => ({
+      completeRegistration,
+      error,
+      login,
+      logout,
+      register,
+      status,
+      keycloakSubject,
+      username,
+    }),
+    [
+      completeRegistration,
+      error,
+      keycloakSubject,
+      login,
+      logout,
+      register,
+      status,
+      username,
+    ],
   );
 
   if (

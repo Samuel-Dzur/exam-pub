@@ -24,7 +24,7 @@ export default function LoginPage() {
       setLoginError(
         error instanceof Error
           ? error.message
-          : "Přihlášení se nepodařilo zahájit. Zkuste to prosím znovu.",
+          : "Nepodařilo se zahájit přihlášení ani registraci. Zkuste to prosím znovu.",
       );
     }
   }

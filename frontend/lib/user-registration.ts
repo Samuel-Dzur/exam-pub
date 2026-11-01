@@ -1,55 +1,32 @@
-import { getKeycloakAccessToken } from "@/lib/keycloak";
+import {
+  completeRegistration,
+  getRegistrationStatus,
+} from "@/lib/api/generated/sdk.gen";
+import type { RegistrationStatusResponse } from "@/lib/api/generated/types.gen";
+import { throwApiError } from "@/lib/api/errors";
 
-const apiOrigin = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8081").replace(/\/$/, "");
-const registrationUrl = `${apiOrigin}/api/users/registration`;
-
-async function registrationRequest(
-  failureMessage: string,
-  init?: RequestInit,
-): Promise<Response> {
-  const token = await getKeycloakAccessToken();
-  const headers = new Headers(init?.headers);
-  headers.set("Authorization", "Bearer " + token);
-  if (init?.body) {
-    headers.set("Content-Type", "application/json");
-  }
-  const response = await fetch(registrationUrl, {
-    ...init,
-    headers,
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      response.status === 401 || response.status === 403
-        ? "Your session has expired. Please sign in again."
-        : failureMessage,
+export async function getUserRegistrationStatus(): Promise<RegistrationStatusResponse> {
+  const { data, response } = await getRegistrationStatus();
+  if (!response?.ok) {
+    throwApiError(
+      response,
+      "Could not check registration status. Please try again.",
     );
   }
-  return response;
-}
-
-export async function isUserRegistrationComplete(): Promise<boolean> {
-  const response = await registrationRequest(
-    "Nepodařilo se ověřit stav registrace. Zkuste to prosím znovu.",
-  );
-  const result: unknown = await response.json();
-  if (
-    typeof result !== "object" ||
-    result === null ||
-    !("completed" in result) ||
-    typeof result.completed !== "boolean"
-  ) {
+  if (!data) {
     throw new Error("Backend returned an invalid registration status.");
   }
-  return result.completed;
+  return data;
 }
 
 export async function submitUserRegistration(birthDate: string): Promise<void> {
-  await registrationRequest(
-    "Registraci se nepodařilo uložit. Zkuste to prosím znovu.",
-    {
-      method: "POST",
-      body: JSON.stringify({ birthDate }),
-    },
-  );
+  const { response } = await completeRegistration({
+    body: { birthDate },
+  });
+  if (!response?.ok) {
+    throwApiError(
+      response,
+      "Could not save your registration. Please try again.",
+    );
+  }
 }

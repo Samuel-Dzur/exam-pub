@@ -28,7 +28,7 @@ let initialization: Promise<boolean> | null = null;
 function requireKeycloak(): Keycloak {
   if (!keycloak) {
     throw new Error(
-      `Chybí konfigurace Keycloak: ${missingSettings.join(", ")}. Nastavte ji ve frontend/.env.local a restartujte aplikaci.`,
+      `Missing Keycloak configuration: ${missingSettings.join(", ")}. Set it in frontend/.env.local and restart the app.`,
     );
   }
 
@@ -50,6 +50,11 @@ export function initializeKeycloak(): Promise<boolean> {
 export function getKeycloakUsername(): string | null {
   const username = requireKeycloak().tokenParsed?.preferred_username;
   return typeof username === "string" && username.length > 0 ? username : null;
+}
+
+export function getKeycloakSubject(): string | null {
+  const subject = requireKeycloak().tokenParsed?.sub;
+  return typeof subject === "string" && subject.length > 0 ? subject : null;
 }
 
 export async function getKeycloakAccessToken(): Promise<string> {

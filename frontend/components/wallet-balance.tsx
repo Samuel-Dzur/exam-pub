@@ -3,11 +3,32 @@
 import { Wallet } from "lucide-react";
 import styles from "./account-info.module.css";
 
-export default function WalletBalance() {
+const currencyFormatter = new Intl.NumberFormat("cs-CZ", {
+  style: "currency",
+  currency: "CZK",
+  minimumFractionDigits: 0,
+});
+
+interface WalletBalanceProps {
+  pocket?: number;
+  isLoading: boolean;
+  hasError: boolean;
+}
+
+export default function WalletBalance({
+  pocket,
+  isLoading,
+  hasError,
+}: WalletBalanceProps) {
+  const balance =
+    hasError || isLoading || typeof pocket !== "number"
+      ? "-"
+      : currencyFormatter.format(pocket);
+
   return (
     <p className={styles.accountItem}>
       <Wallet size={20} aria-hidden="true" />
-      <span>800 Kč</span>
+      <span>{balance}</span>
     </p>
   );
 }

@@ -153,11 +153,9 @@ export default function RegisterPage() {
     try {
       await completeRegistration(isoBirthDate);
       router.replace("/bar");
-    } catch (submissionError) {
+    } catch {
       setError(
-        submissionError instanceof Error
-          ? submissionError.message
-          : "Registraci se nepodařilo uložit. Zkuste to prosím znovu.",
+        "Registraci se nepodařilo dokončit. Zkuste to prosím znovu.",
       );
     } finally {
       setSubmitting(false);

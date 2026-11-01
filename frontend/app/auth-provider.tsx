@@ -18,6 +18,7 @@ import {
 import {
   getKeycloakSubject,
   getKeycloakUsername,
+  hasKeycloakRealmRole,
   initializeKeycloak,
   loginWithKeycloak,
   logoutFromKeycloak,
@@ -34,6 +35,7 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   register: (returnTo: string | null) => Promise<void>;
   status: AuthStatus;
+  isBartender: boolean;
   keycloakSubject: string | null;
   username: string | null;
 }
@@ -68,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [status, setStatus] = useState<AuthStatus>("loading");
+  const [isBartender, setIsBartender] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [registrationComplete, setRegistrationComplete] = useState<boolean | null>(null);
@@ -90,7 +93,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setUsername(getKeycloakUsername());
         setKeycloakSubject(getKeycloakSubject());
-        const registration = await getUserRegistrationStatus();
+        const bartender = hasKeycloakRealmRole("ROLE_BARTENDER");
+        setIsBartender(bartender);
+        const registration = bartender
+          ? { completed: true }
+          : await getUserRegistrationStatus();
         if (mounted) {
           setRegistrationComplete(registration.completed);
           setStatus("authenticated");
@@ -162,12 +169,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       register,
       status,
+      isBartender,
       keycloakSubject,
       username,
     }),
     [
       completeRegistration,
       error,
+      isBartender,
       keycloakSubject,
       login,
       logout,

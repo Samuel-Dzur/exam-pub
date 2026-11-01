@@ -57,6 +57,10 @@ export function getKeycloakSubject(): string | null {
   return typeof subject === "string" && subject.length > 0 ? subject : null;
 }
 
+export function hasKeycloakRealmRole(role: string): boolean {
+  return requireKeycloak().hasRealmRole(role);
+}
+
 export async function getKeycloakAccessToken(): Promise<string> {
   const client = requireKeycloak();
   await client.updateToken(30);

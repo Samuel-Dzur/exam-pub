@@ -1,0 +1,14 @@
+.viewTitle {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.table th:first-child,
+.table th[scope="row"] {
+  text-align: left;
+}
+
+.table thead th:nth-child(2) {
+  text-align: left;
+}

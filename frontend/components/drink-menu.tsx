@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ImageOff, LoaderCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/auth-provider";
 import { getDrinkImage, getDrinkMenu } from "@/lib/api/generated/sdk.gen";
 import type { DrinkResponse } from "@/lib/api/generated/types.gen";
 import { throwApiError } from "@/lib/api/errors";
@@ -33,6 +34,8 @@ export default function DrinkMenu({
   showOrderButtons = true,
 }: DrinkMenuProps) {
   const router = useRouter();
+  const { isBartender } = useAuth();
+  const canOrder = showOrderButtons && !isBartender;
   const [drinks, setDrinks] = useState<DrinkResponse[]>([]);
   const [images, setImages] = useState<Map<number, DrinkImage>>(() => new Map());
   const [status, setStatus] = useState<MenuStatus>("loading");
@@ -169,9 +172,11 @@ export default function DrinkMenu({
       <header className={styles.header}>
         <p className={styles.eyebrow}>Aktuální nabídka</p>
         <h1 id="drink-menu-title">Nápojový lístek</h1>
-        <p className={styles.intro}>
-          Vyberte si z naší nabídky. Na zdraví!
-        </p>
+        {!isBartender && (
+          <p className={styles.intro}>
+            Vyberte si z naší nabídky. Na zdraví!
+          </p>
+        )}
       </header>
 
       {status === "loading" && (
@@ -194,7 +199,7 @@ export default function DrinkMenu({
       {status === "ready" && drinks.length > 0 && (
         <ul
           className={`${styles.grid} ${
-            showOrderButtons ? styles.gridWithOrderButtons : ""
+            canOrder ? styles.gridWithOrderButtons : ""
           }`}
           ref={gridRef}
         >
@@ -210,7 +215,7 @@ export default function DrinkMenu({
                 onClick={() => {
                   if (onDrinkClick) {
                     onDrinkClick();
-                  } else if (showOrderButtons && typeof drink.id === "number") {
+                  } else if (canOrder && typeof drink.id === "number") {
                     router.push(`/checkout/${drink.id}`);
                   }
                 }}
@@ -249,7 +254,7 @@ export default function DrinkMenu({
                 </div>
                 <div
                   className={`${styles.details} ${
-                    showOrderButtons ? "" : styles.detailsWithoutOrderButton
+                    canOrder ? "" : styles.detailsWithoutOrderButton
                   }`}
                 >
                   <div className={styles.nameRow}>
@@ -264,7 +269,7 @@ export default function DrinkMenu({
                       ? currencyFormatter.format(drink.price)
                       : "Cena není dostupná"}
                   </p>
-                  {showOrderButtons && (
+                  {canOrder && (
                     <PrimaryButton
                       className={styles.orderButton}
                       compact

@@ -1,0 +1,90 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  align-content: center;
+  justify-items: center;
+  padding: 48px 24px;
+  background: var(--paper);
+}
+
+.card {
+  width: min(100%, 1100px);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 0 32px;
+  font-family: Baskerville, "Times New Roman", serif;
+  font-size: clamp(32px, 5vw, 42px);
+  font-weight: 400;
+}
+
+.switch {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.switchLink {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switchLink[aria-current="page"] {
+  background: var(--green);
+  color: #fff;
+}
+
+.switchLink:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.switchLink:hover:not([aria-current="page"]) {
+  background: var(--paper);
+  color: var(--muted);
+}
+
+.backLink {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  padding: 0 20px;
+  border-radius: 6px;
+  background: var(--green);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  background: var(--green-dark);
+}
+
+.backLink:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}

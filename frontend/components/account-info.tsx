@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/auth-provider";
+import Link from "next/link";
+import { ClipboardList } from "lucide-react";
 import type { UserWithOrdersResponse } from "@/lib/api/generated/types.gen";
 import { getUserData } from "@/lib/user";
 import Profile from "./profile";
@@ -15,12 +17,12 @@ interface UserDataResult {
 }
 
 export default function AccountInfo() {
-  const { keycloakSubject } = useAuth();
+  const { isBartender, keycloakSubject } = useAuth();
   const [result, setResult] = useState<UserDataResult | null>(null);
 
   useEffect(() => {
     let active = true;
-    if (keycloakSubject === null) {
+    if (isBartender || keycloakSubject === null) {
       return;
     }
 
@@ -42,18 +44,26 @@ export default function AccountInfo() {
     return () => {
       active = false;
     };
-  }, [keycloakSubject]);
+  }, [isBartender, keycloakSubject]);
 
   const currentResult =
     result?.keycloakSubject === keycloakSubject ? result : null;
 
   return (
     <div className={styles.accountInfo}>
-      <WalletBalance
-        pocket={currentResult?.user?.pocket}
-        isLoading={keycloakSubject !== null && currentResult === null}
-        hasError={keycloakSubject === null || currentResult?.hasError === true}
-      />
+      {!isBartender && (
+        <WalletBalance
+          pocket={currentResult?.user?.pocket}
+          isLoading={keycloakSubject !== null && currentResult === null}
+          hasError={keycloakSubject === null || currentResult?.hasError === true}
+        />
+      )}
+      {isBartender && (
+        <Link className={styles.summaryLink} href="/summary">
+          <ClipboardList size={18} aria-hidden="true" />
+          <span>Přehled</span>
+        </Link>
+      )}
       <Profile />
     </div>
   );

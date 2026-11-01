@@ -13,7 +13,7 @@ import LogoutDialog from "@/components/logout-dialog";
 import styles from "./account-info.module.css";
 
 export default function Profile() {
-  const { username } = useAuth();
+  const { isBartender, username } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -66,24 +66,28 @@ export default function Profile() {
         </button>
         {isMenuOpen && (
           <div className={styles.profileMenu} id="profile-menu" role="menu">
-            <Link
-              className={styles.profileMenuItem}
-              href="/profile"
-              role="menuitem"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <UserRound size={18} aria-hidden="true" />
-              <span>Profil</span>
-            </Link>
-            <Link
-              className={styles.profileMenuItem}
-              href="/orders"
-              role="menuitem"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <ReceiptText size={18} aria-hidden="true" />
-              <span>Moje objednávky</span>
-            </Link>
+            {!isBartender && (
+              <>
+                <Link
+                  className={styles.profileMenuItem}
+                  href="/profile"
+                  role="menuitem"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <UserRound size={18} aria-hidden="true" />
+                  <span>Profil</span>
+                </Link>
+                <Link
+                  className={styles.profileMenuItem}
+                  href="/orders"
+                  role="menuitem"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <ReceiptText size={18} aria-hidden="true" />
+                  <span>Moje objednávky</span>
+                </Link>
+              </>
+            )}
             <button
               className={styles.profileMenuItem}
               type="button"

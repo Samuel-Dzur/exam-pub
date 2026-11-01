@@ -32,6 +32,30 @@
   position: relative;
 }
 
+.summaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.summaryLink:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.summaryLink svg {
+  flex: 0 0 auto;
+}
+
 .profileTrigger {
   display: inline-flex;
   align-items: center;

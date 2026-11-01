@@ -84,6 +84,9 @@ services:
       - NODE_ENV=development
       - PORT=3000
       - NEXT_PUBLIC_API_URL=http://localhost:8081
+      - NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
+      - NEXT_PUBLIC_KEYCLOAK_REALM=application
+      - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend
     networks:
       - hospoda-network
     depends_on:

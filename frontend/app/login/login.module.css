@@ -1,14 +1,29 @@
 .page {
   display: grid;
-  min-height: 100vh;
+  grid-template-areas:
+    "story panel"
+    "menu .";
   grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  grid-template-rows: minmax(100vh, auto) auto;
+  min-height: 100vh;
   background: #fff;
 }
 
+.hero {
+  display: contents;
+}
+
+.menuSection {
+  grid-area: menu;
+  padding: 56px 48px 72px;
+  background: var(--paper);
+}
+
 .story {
+  grid-area: story;
   position: relative;
   display: flex;
-  min-height: 100%;
+  min-height: 100vh;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
@@ -110,7 +125,12 @@
 }
 
 .panel {
+  grid-area: panel;
+  position: sticky;
+  top: 0;
   display: flex;
+  height: 100vh;
+  align-self: start;
   align-items: center;
   justify-content: center;
   padding: 64px clamp(28px, 6vw, 88px);
@@ -118,6 +138,19 @@
 
 .card {
   width: min(100%, 400px);
+  margin-inline: auto;
+}
+
+.loginButtonPrompt {
+  animation: loginButtonPrompt 850ms ease-in-out;
+}
+
+@keyframes loginButtonPrompt {
+  35% {
+    transform: scale(1.04);
+    background: var(--gold);
+    color: var(--ink);
+  }
 }
 
 .card h2 {
@@ -191,7 +224,15 @@
 
 @media (max-width: 760px) {
   .page {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero {
+    display: flex;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
   }
 
   .story {
@@ -214,8 +255,17 @@
   }
 
   .panel {
-    align-items: flex-start;
+    position: static;
+    flex: 1;
+    width: 100%;
+    height: auto;
+    align-items: center;
+    justify-content: center;
     padding: 52px 28px 64px;
+  }
+
+  .menuSection {
+    padding: 40px 28px 56px;
   }
 }
 
@@ -234,5 +284,9 @@
 
   .panel {
     padding: 40px 24px 52px;
+  }
+
+  .menuSection {
+    padding: 36px 20px 48px;
   }
 }

@@ -1,7 +1,7 @@
 .accountInfo {
   position: absolute;
   top: 32px;
-  right: 48px;
+  right: 64px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -94,4 +94,11 @@
 
 .profileMenuItem:hover {
   background: var(--paper);
+}
+
+@media (max-width: 700px) {
+  .accountInfo {
+    top: 74px;
+    right: 24px;
+  }
 }

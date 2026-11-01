@@ -1,57 +1,88 @@
 .page {
   position: relative;
-  display: grid;
+  isolation: isolate;
   min-height: 100vh;
-  place-items: center;
-  padding: 24px;
+  padding: 0 48px;
+}
+
+.page::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: url("/images/bar.webp") center / cover no-repeat;
+  content: "";
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  width: min(100%, 1500px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 160px 64px 56px;
   background: var(--paper);
 }
 
 .brand {
   position: absolute;
-  top: 32px;
+  top: 28px;
   left: 48px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 22px;
+  font-family: Baskerville, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  text-decoration: none;
+}
+
+.brand:hover span,
+.brand:focus-visible span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 5px;
+}
+
+.brandExternalIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
 }
 
 .brandLogo {
-  width: 48px;
-  height: 48px;
+  width: 96px;
+  height: 96px;
   border-radius: 5px;
   object-fit: cover;
 }
 
-.card {
-  width: min(100%, 440px);
-  padding: 40px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 16px 48px rgb(24 34 28 / 8%);
+@media (max-width: 1500px) {
+  .page {
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 
-.card h1 {
-  margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(30px, 5vw, 40px);
-  font-weight: 400;
-  letter-spacing: -0.035em;
-}
+@media (max-width: 700px) {
+  .content {
+    padding: 136px 24px 40px;
+  }
 
-.intro {
-  margin: 14px 0 28px;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.65;
-}
+  .brand {
+    top: 18px;
+    left: 20px;
+    gap: 12px;
+    font-size: 24px;
+  }
 
-@media (max-width: 400px) {
-  .card {
-    padding: 30px 24px;
+  .brandLogo {
+    width: 80px;
+    height: 80px;
   }
 }

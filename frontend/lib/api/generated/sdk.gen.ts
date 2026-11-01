@@ -60,7 +60,11 @@ export const getOrdersByUserId = <ThrowOnError extends boolean = false>(options:
 
 export const getOrdersByProductId = <ThrowOnError extends boolean = false>(options: Options<GetOrdersByProductIdData, ThrowOnError>): RequestResult<GetOrdersByProductIdResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOrdersByProductIdResponses, unknown, ThrowOnError>({ url: '/summary/product/{productId}', ...options });
 
-export const getAllProductSummaries = <ThrowOnError extends boolean = false>(options?: Options<GetAllProductSummariesData, ThrowOnError>): RequestResult<GetAllProductSummariesResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAllProductSummariesResponses, unknown, ThrowOnError>({ url: '/summary/all', ...options });
+export const getAllProductSummaries = <ThrowOnError extends boolean = false>(options?: Options<GetAllProductSummariesData, ThrowOnError>): RequestResult<GetAllProductSummariesResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetAllProductSummariesResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/summary/all',
+    ...options
+});
 
 export const getDrinkImage = <ThrowOnError extends boolean = false>(options: Options<GetDrinkImageData, ThrowOnError>): RequestResult<GetDrinkImageResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetDrinkImageResponses, unknown, ThrowOnError>({ url: '/image/{id}', ...options });
 

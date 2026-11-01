@@ -81,6 +81,7 @@ public class SummaryController {
 
     @GetMapping("/all")
     @BartenderAccess
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<ProductSummaryResponse>> getAllProductSummaries() {
         List<ProductSummaryResponse> summaries = summaryService.getAllProductSummaries().stream()
             .map(summaryMapper::toResponse)

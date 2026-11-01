@@ -83,6 +83,7 @@ public class UserController {
 
     @GetMapping("/users")
     @BartenderAccess
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<UserResponse>> getUsers() {
         List<UserResponse> users = userService.getUsers().stream()
             .map(userMapper::toResponse)

@@ -44,7 +44,11 @@ export const buy = <ThrowOnError extends boolean = false>(options: Options<BuyDa
     }
 });
 
-export const getUsers = <ThrowOnError extends boolean = false>(options?: Options<GetUsersData, ThrowOnError>): RequestResult<GetUsersResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetUsersResponses, unknown, ThrowOnError>({ url: '/users', ...options });
+export const getUsers = <ThrowOnError extends boolean = false>(options?: Options<GetUsersData, ThrowOnError>): RequestResult<GetUsersResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetUsersResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/users',
+    ...options
+});
 
 export const getUserByKeycloakId = <ThrowOnError extends boolean = false>(options: Options<GetUserByKeycloakIdData, ThrowOnError>): RequestResult<GetUserByKeycloakIdResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetUserByKeycloakIdResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],

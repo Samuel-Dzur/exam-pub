@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CircleUserRound, LogOut } from "lucide-react";
+import Link from "next/link";
+import { CircleUserRound, LogOut, UserRound } from "lucide-react";
 import { useAuth } from "@/app/auth-provider";
 import LogoutDialog from "@/components/logout-dialog";
 import styles from "./account-info.module.css";
@@ -60,6 +61,15 @@ export default function Profile() {
         </button>
         {isMenuOpen && (
           <div className={styles.profileMenu} id="profile-menu" role="menu">
+            <Link
+              className={styles.profileMenuItem}
+              href="/profile"
+              role="menuitem"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <UserRound size={18} aria-hidden="true" />
+              <span>Profil</span>
+            </Link>
             <button
               className={styles.profileMenuItem}
               type="button"

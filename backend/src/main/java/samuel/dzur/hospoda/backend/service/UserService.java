@@ -38,6 +38,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Long> getUserIdByKeycloakId(String keycloakId) {
+        return userRepository.findByKeycloakId(keycloakId)
+            .map(user -> user.getId());
+    }
+
+    @Transactional(readOnly = true)
     public boolean isRegistrationComplete(String keycloakId) {
         return userRepository.findByKeycloakId(keycloakId)
             .map(user -> user.getBirthDate() != null)

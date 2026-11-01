@@ -52,7 +52,11 @@ export const getUserByKeycloakId = <ThrowOnError extends boolean = false>(option
     ...options
 });
 
-export const getOrdersByUserId = <ThrowOnError extends boolean = false>(options: Options<GetOrdersByUserIdData, ThrowOnError>): RequestResult<GetOrdersByUserIdResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOrdersByUserIdResponses, unknown, ThrowOnError>({ url: '/summary/user/{userId}', ...options });
+export const getOrdersByUserId = <ThrowOnError extends boolean = false>(options: Options<GetOrdersByUserIdData, ThrowOnError>): RequestResult<GetOrdersByUserIdResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOrdersByUserIdResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/summary/user/{userId}',
+    ...options
+});
 
 export const getOrdersByProductId = <ThrowOnError extends boolean = false>(options: Options<GetOrdersByProductIdData, ThrowOnError>): RequestResult<GetOrdersByProductIdResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOrdersByProductIdResponses, unknown, ThrowOnError>({ url: '/summary/product/{productId}', ...options });
 

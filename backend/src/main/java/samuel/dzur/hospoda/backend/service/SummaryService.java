@@ -2,10 +2,10 @@ package samuel.dzur.hospoda.backend.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import samuel.dzur.hospoda.backend.api.responses.DrinkResponse;
-import samuel.dzur.hospoda.backend.api.responses.ProductOrderSummaryResponse;
-import samuel.dzur.hospoda.backend.api.responses.ProductSummaryResponse;
-import samuel.dzur.hospoda.backend.api.responses.UserOrderSummaryResponse;
+import samuel.dzur.hospoda.backend.dto.DrinkDto;
+import samuel.dzur.hospoda.backend.dto.ProductOrderSummaryDto;
+import samuel.dzur.hospoda.backend.dto.ProductSummaryDto;
+import samuel.dzur.hospoda.backend.dto.UserOrderSummaryDto;
 import samuel.dzur.hospoda.backend.repository.DrinkRepository;
 import samuel.dzur.hospoda.backend.repository.OrderRepository;
 import samuel.dzur.hospoda.backend.repository.UserRepository;
@@ -36,13 +36,13 @@ public class SummaryService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<List<ProductOrderSummaryResponse>> getOrdersByProductId(Long productId) {
+    public Optional<List<ProductOrderSummaryDto>> getOrdersByProductId(Long productId) {
         if (!drinkRepository.existsById(productId)) {
             return Optional.empty();
         }
 
-        List<ProductOrderSummaryResponse> orders = orderRepository.findAllByDrinkIdWithUser(productId).stream()
-            .map(order -> new ProductOrderSummaryResponse(
+        List<ProductOrderSummaryDto> orders = orderRepository.findAllByDrinkIdWithUser(productId).stream()
+            .map(order -> new ProductOrderSummaryDto(
                 order.getUser().getId(),
                 order.getAmount(),
                 orderTotal(order)
@@ -53,13 +53,13 @@ public class SummaryService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<List<UserOrderSummaryResponse>> getOrdersByUserId(Long userId) {
+    public Optional<List<UserOrderSummaryDto>> getOrdersByUserId(Long userId) {
         if (!userRepository.existsById(userId)) {
             return Optional.empty();
         }
 
         return Optional.of(orderRepository.findAllByUserIdWithDrink(userId).stream()
-            .map(order -> new UserOrderSummaryResponse(
+            .map(order -> new UserOrderSummaryDto(
                 order.getPriceRecord().getDrink().getId(),
                 order.getPriceRecord().getDrink().getProductName(),
                 order.getAmount(),
@@ -69,7 +69,7 @@ public class SummaryService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductSummaryResponse> getAllProductSummaries() {
+    public List<ProductSummaryDto> getAllProductSummaries() {
         Map<Long, ProductSummaryAccumulator> summaries = new LinkedHashMap<>();
 
         for (OrderEntity order : orderRepository.findAllWithDrink()) {
@@ -86,7 +86,7 @@ public class SummaryService {
             .toList();
     }
 
-    private ProductSummaryResponse toResponse(ProductSummaryAccumulator summary) {
+    private ProductSummaryDto toResponse(ProductSummaryAccumulator summary) {
         DrinkEntity drink = summary.drink;
         BigDecimal currentPrice = drink.getPriceRecords().stream()
             .findFirst()
@@ -95,8 +95,8 @@ public class SummaryService {
             ))
             .getPrice();
         
-        return new ProductSummaryResponse(
-            new DrinkResponse(
+        return new ProductSummaryDto(
+            new DrinkDto(
                 drink.getId(),
                 drink.getProductName(),
                 currentPrice,

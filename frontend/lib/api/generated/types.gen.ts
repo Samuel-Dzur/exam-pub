@@ -8,6 +8,19 @@ export type CompleteRegistrationRequest = {
     birthDate?: string;
 };
 
+export type BuyRequest = {
+    productId: number;
+    count: number;
+};
+
+export type BuyResponse = {
+    orderId?: number;
+    productId?: number;
+    count?: number;
+    total?: number;
+    remainingBalance?: number;
+};
+
 export type UserResponse = {
     id?: number;
     name?: string;
@@ -92,6 +105,22 @@ export type CompleteRegistrationResponses = {
      */
     200: unknown;
 };
+
+export type BuyData = {
+    body: BuyRequest;
+    path?: never;
+    query?: never;
+    url: '/buy';
+};
+
+export type BuyResponses = {
+    /**
+     * OK
+     */
+    200: BuyResponse;
+};
+
+export type BuyResponse2 = BuyResponses[keyof BuyResponses];
 
 export type GetUsersData = {
     body?: never;

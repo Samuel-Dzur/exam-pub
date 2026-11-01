@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CompleteRegistrationData, CompleteRegistrationResponses, GetAllProductSummariesData, GetAllProductSummariesResponses, GetDrinkImageData, GetDrinkImageResponses, GetDrinkMenuData, GetDrinkMenuResponses, GetOrdersByProductIdData, GetOrdersByProductIdResponses, GetOrdersByUserIdData, GetOrdersByUserIdResponses, GetRegistrationStatusData, GetRegistrationStatusResponses, GetUserByKeycloakIdData, GetUserByKeycloakIdResponses, GetUsersData, GetUsersResponses } from './types.gen';
+import type { BuyData, BuyResponses, CompleteRegistrationData, CompleteRegistrationResponses, GetAllProductSummariesData, GetAllProductSummariesResponses, GetDrinkImageData, GetDrinkImageResponses, GetDrinkMenuData, GetDrinkMenuResponses, GetOrdersByProductIdData, GetOrdersByProductIdResponses, GetOrdersByUserIdData, GetOrdersByUserIdResponses, GetRegistrationStatusData, GetRegistrationStatusResponses, GetUserByKeycloakIdData, GetUserByKeycloakIdResponses, GetUsersData, GetUsersResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -27,6 +27,16 @@ export const getRegistrationStatus = <ThrowOnError extends boolean = false>(opti
 export const completeRegistration = <ThrowOnError extends boolean = false>(options: Options<CompleteRegistrationData, ThrowOnError>): RequestResult<CompleteRegistrationResponses, unknown, ThrowOnError> => (options.client ?? client).post<CompleteRegistrationResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users/registration',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const buy = <ThrowOnError extends boolean = false>(options: Options<BuyData, ThrowOnError>): RequestResult<BuyResponses, unknown, ThrowOnError> => (options.client ?? client).post<BuyResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/buy',
     ...options,
     headers: {
         'Content-Type': 'application/json',

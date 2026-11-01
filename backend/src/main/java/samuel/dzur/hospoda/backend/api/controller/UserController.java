@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import samuel.dzur.hospoda.backend.security.annotation.BartenderAccess;
-import samuel.dzur.hospoda.backend.security.annotation.CustomerAccess;
 import samuel.dzur.hospoda.backend.api.requests.CompleteRegistrationRequest;
 import samuel.dzur.hospoda.backend.api.responses.RegistrationStatusResponse;
 import samuel.dzur.hospoda.backend.api.responses.UserResponse;
 import samuel.dzur.hospoda.backend.api.responses.UserWithOrdersResponse;
+import samuel.dzur.hospoda.backend.api.mapper.UserMapper;
+import samuel.dzur.hospoda.backend.dto.UserWithOrdersDto;
+import samuel.dzur.hospoda.backend.security.annotation.BartenderAccess;
+import samuel.dzur.hospoda.backend.security.annotation.CustomerAccess;
 import samuel.dzur.hospoda.backend.service.UserService;
 
 import java.time.LocalDate;
@@ -38,16 +40,20 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @GetMapping("/users/registration")
     @CustomerAccess
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public RegistrationStatusResponse getRegistrationStatus(@AuthenticationPrincipal Jwt jwt) {
-        return new RegistrationStatusResponse(userService.isRegistrationComplete(jwt.getSubject()));
+        return userMapper.toRegistrationStatusResponse(
+            userService.isRegistrationComplete(jwt.getSubject())
+        );
     }
 
     @PostMapping("/users/registration")
@@ -78,7 +84,9 @@ public class UserController {
     @GetMapping("/users")
     @BartenderAccess
     public ResponseEntity<List<UserResponse>> getUsers() {
-        List<UserResponse> users = userService.getUsers();
+        List<UserResponse> users = userService.getUsers().stream()
+            .map(userMapper::toResponse)
+            .toList();
         return ResponseEntity.ok(users);
     }
 
@@ -95,12 +103,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        Optional<UserWithOrdersResponse> user = userService.getUserByKeycloakId(keycloakId);
+        Optional<UserWithOrdersDto> user = userService.getUserByKeycloakId(keycloakId);
         if (user.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         
-        return ResponseEntity.ok(user.get());
+        return ResponseEntity.ok(userMapper.toResponse(user.get()));
     }
 
     private boolean canAccessUser(

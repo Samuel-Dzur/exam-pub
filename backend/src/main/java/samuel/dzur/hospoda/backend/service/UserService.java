@@ -2,9 +2,9 @@ package samuel.dzur.hospoda.backend.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import samuel.dzur.hospoda.backend.api.responses.OrderResponse;
-import samuel.dzur.hospoda.backend.api.responses.UserResponse;
-import samuel.dzur.hospoda.backend.api.responses.UserWithOrdersResponse;
+import samuel.dzur.hospoda.backend.dto.OrderDto;
+import samuel.dzur.hospoda.backend.dto.UserDto;
+import samuel.dzur.hospoda.backend.dto.UserWithOrdersDto;
 import samuel.dzur.hospoda.backend.repository.UserRepository;
 import samuel.dzur.hospoda.backend.repository.entity.OrderEntity;
 import samuel.dzur.hospoda.backend.repository.entity.UserEntity;
@@ -25,16 +25,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserResponse> getUsers() {
-        List<UserResponse> userResponses = userRepository.findAll().stream()
+    public List<UserDto> getUsers() {
+        return userRepository.findAll().stream()
             .map(this::toUserResponse)
             .toList();
-
-        return userResponses;
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserWithOrdersResponse> getUserByKeycloakId(String keycloakId) {
+    public Optional<UserWithOrdersDto> getUserByKeycloakId(String keycloakId) {
         return userRepository.findByKeycloakId(keycloakId)
             .map(this::toUserWithOrdersResponse);
     }
@@ -69,12 +67,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    private UserWithOrdersResponse toUserWithOrdersResponse(UserEntity user) {
-        List<OrderResponse> orders = user.getOrders().stream()
+    private UserWithOrdersDto toUserWithOrdersResponse(UserEntity user) {
+        List<OrderDto> orders = user.getOrders().stream()
             .map(this::toOrderResponse)
             .toList();
 
-        return new UserWithOrdersResponse(
+        return new UserWithOrdersDto(
             user.getId(),
             user.getName(),
             user.getIsActive(),
@@ -84,11 +82,11 @@ public class UserService {
         );
     }
 
-    private OrderResponse toOrderResponse(OrderEntity order) {
+    private OrderDto toOrderResponse(OrderEntity order) {
         BigDecimal totalPrice = order.getPriceRecord().getPrice()
             .multiply(BigDecimal.valueOf(order.getAmount()));
 
-        return new OrderResponse(
+        return new OrderDto(
             order.getId(),
             order.getPriceRecord().getDrink().getProductName(),
             order.getAmount(),
@@ -96,8 +94,8 @@ public class UserService {
         );
     }
 
-    private UserResponse toUserResponse(UserEntity user) {
-        return new UserResponse(
+    private UserDto toUserResponse(UserEntity user) {
+        return new UserDto(
             user.getId(),
             user.getName(),
             user.getIsActive(),

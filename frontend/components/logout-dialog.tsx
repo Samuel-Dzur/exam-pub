@@ -66,12 +66,8 @@ export default function LogoutDialog({ open, onClose }: LogoutDialogProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="logout-dialog-title"
-        aria-describedby="logout-dialog-description"
       >
         <h2 id="logout-dialog-title">Odhlásit se?</h2>
-        <p id="logout-dialog-description">
-          Opravdu se chcete odhlásit ze svého účtu?
-        </p>
         {logoutError && (
           <ErrorMessage>
             {logoutError}
@@ -89,6 +85,7 @@ export default function LogoutDialog({ open, onClose }: LogoutDialogProps) {
           </button>
           <PrimaryButton
             compact
+            className={styles.logoutButton}
             type="button"
             onClick={handleLogout}
             disabled={isLoggingOut}

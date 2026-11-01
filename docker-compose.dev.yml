@@ -21,7 +21,7 @@ services:
   
   keycloak:
     image: quay.io/keycloak/keycloak:26.8.0
-    command: start-dev
+    command: start-dev --import-realm
     container_name: hospoda-keycloak
     environment:
       KC_DB: postgres
@@ -34,6 +34,7 @@ services:
       - "8080:8080"
     volumes:
       - ./keycloak/themes:/opt/keycloak/themes:ro
+      - ./keycloak/import:/opt/keycloak/data/import:ro
     depends_on:
       postgres:
         condition: service_healthy

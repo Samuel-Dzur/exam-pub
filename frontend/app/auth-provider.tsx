@@ -10,6 +10,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { LoaderCircle } from "lucide-react";
+import {
+  isUserRegistrationComplete,
+  submitUserRegistration,
+} from "@/lib/user-registration";
 import {
   getKeycloakUsername,
   initializeKeycloak,
@@ -22,6 +27,7 @@ import styles from "./auth-provider.module.css";
 type AuthStatus = "loading" | "authenticated" | "unauthenticated" | "error";
 
 interface AuthContextValue {
+  completeRegistration: (birthDate: string) => Promise<void>;
   error: string | null;
   login: (returnTo: string | null) => Promise<void>;
   logout: () => Promise<void>;
@@ -31,6 +37,7 @@ interface AuthContextValue {
 }
 
 const loginPath = "/login";
+const registrationPath = "/register";
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function safeReturnPath(returnTo: string | null): string {
@@ -67,23 +74,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [registrationComplete, setRegistrationComplete] = useState<boolean | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
-    initializeKeycloak()
-      .then((authenticated) => {
-        if (mounted) {
-          setUsername(authenticated ? getKeycloakUsername() : null);
-          setStatus(authenticated ? "authenticated" : "unauthenticated");
+    async function initializeAuthentication() {
+      try {
+        const authenticated = await initializeKeycloak();
+        if (!mounted) {
+          return;
         }
-      })
-      .catch((initializationError: unknown) => {
+
+        if (!authenticated) {
+          setStatus("unauthenticated");
+          return;
+        }
+
+        setUsername(getKeycloakUsername());
+        const complete = await isUserRegistrationComplete();
+        if (mounted) {
+          setRegistrationComplete(complete);
+          setStatus("authenticated");
+        }
+      } catch (initializationError: unknown) {
         if (mounted) {
           setError(getErrorMessage(initializationError));
           setStatus("error");
         }
-      });
+      }
+    }
+
+    void initializeAuthentication();
 
     return () => {
       mounted = false;
@@ -97,11 +119,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (status === "authenticated" && pathname === loginPath) {
-      const returnTo = new URLSearchParams(window.location.search).get("returnTo");
-      router.replace(safeReturnPath(returnTo));
+    if (status === "authenticated") {
+      if (!registrationComplete && pathname !== registrationPath) {
+        router.replace(registrationPath);
+        return;
+      }
+      if (registrationComplete && pathname === registrationPath) {
+        router.replace("/bar");
+        return;
+      }
+      if (registrationComplete && pathname === loginPath) {
+        const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+        router.replace(safeReturnPath(returnTo));
+      }
     }
-  }, [pathname, router, status]);
+  }, [pathname, registrationComplete, router, status]);
 
   const login = useCallback(async (returnTo: string | null) => {
     const redirectPath = safeReturnPath(returnTo);
@@ -117,27 +149,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await logoutFromKeycloak(`${window.location.origin}${loginPath}`);
   }, []);
 
+  const completeRegistration = useCallback(async (birthDate: string) => {
+    await submitUserRegistration(birthDate);
+    setRegistrationComplete(true);
+  }, []);
+
   const value = useMemo(
-    () => ({ error, login, logout, register, status, username }),
-    [error, login, logout, register, status, username],
+    () => ({ completeRegistration, error, login, logout, register, status, username }),
+    [completeRegistration, error, login, logout, register, status, username],
   );
 
-  if (pathname !== loginPath && status !== "authenticated") {
+  if (
+    pathname !== loginPath &&
+    (status !== "authenticated" ||
+      registrationComplete === null ||
+      (!registrationComplete && pathname !== registrationPath))
+  ) {
     return (
       <main className={styles.status} role={status === "error" ? "alert" : "status"}>
-        <div className={styles.statusCard}>
-          {status === "error" ? (
-            <>
-              <strong>Nepodařilo se ověřit přihlášení</strong>
-              {error}
-            </>
-          ) : (
-            <>
-              <strong>Ověřujeme přihlášení</strong>
-              Počkejte prosím, připojujeme se k přihlašovací službě.
-            </>
-          )}
-        </div>
+        {status === "error" ? (
+          <div className={styles.statusCard}>
+            <strong>Nepodařilo se ověřit přihlášení</strong>
+            {error}
+          </div>
+        ) : (
+          <div className={styles.loadingStatus}>
+            <LoaderCircle className={styles.loadingIcon} aria-hidden="true" />
+            <strong>Ověřujeme přihlášení</strong>
+          </div>
+        )}
       </main>
     );
   }

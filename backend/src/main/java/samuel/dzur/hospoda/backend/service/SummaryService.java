@@ -11,7 +11,6 @@ import samuel.dzur.hospoda.backend.repository.OrderRepository;
 import samuel.dzur.hospoda.backend.repository.UserRepository;
 import samuel.dzur.hospoda.backend.repository.entity.DrinkEntity;
 import samuel.dzur.hospoda.backend.repository.entity.OrderEntity;
-import samuel.dzur.hospoda.backend.repository.entity.PriceRecordEntity;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -91,10 +90,10 @@ public class SummaryService {
         DrinkEntity drink = summary.drink;
         BigDecimal currentPrice = drink.getPriceRecords().stream()
             .findFirst()
-            .map(PriceRecordEntity::getPrice)
             .orElseThrow(() -> new IllegalStateException(
                 "Drink " + drink.getId() + " has no price records"
-            ));
+            ))
+            .getPrice();
         
         return new ProductSummaryResponse(
             new DrinkResponse(

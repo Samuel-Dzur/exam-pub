@@ -58,6 +58,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://hospoda-postgres:5432/application
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/application
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/application/protocol/openid-connect/certs
+      APP_CORS_ALLOWED_ORIGIN: http://localhost:3000
     depends_on:
       postgres:
         condition: service_healthy

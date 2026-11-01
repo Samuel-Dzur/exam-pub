@@ -52,6 +52,15 @@ export function getKeycloakUsername(): string | null {
   return typeof username === "string" && username.length > 0 ? username : null;
 }
 
+export async function getKeycloakAccessToken(): Promise<string> {
+  const client = requireKeycloak();
+  await client.updateToken(30);
+  if (!client.token) {
+    throw new Error("Your session has expired. Please sign in again.");
+  }
+  return client.token;
+}
+
 export async function loginWithKeycloak(redirectUri: string): Promise<void> {
   await requireKeycloak().login({ redirectUri });
 }

@@ -10,12 +10,14 @@ import samuel.dzur.hospoda.backend.repository.entity.OrderEntity;
 import samuel.dzur.hospoda.backend.repository.entity.UserEntity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
+    private static final BigDecimal NEW_USER_BUDGET = BigDecimal.valueOf(800);
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -36,6 +38,36 @@ public class UserService {
         return userRepository.findById(id).map(this::toUserWithOrdersResponse);
     }
 
+    @Transactional(readOnly = true)
+    public boolean isRegistrationComplete(String keycloakId) {
+        return userRepository.findByKeycloakId(keycloakId)
+            .map(user -> user.getBirthDate() != null)
+            .orElse(false);
+    }
+
+    @Transactional
+    public void completeRegistration(String keycloakId, String username, LocalDate birthDate) {
+        if (birthDate == null || birthDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Birth date must be today or earlier.");
+        }
+
+        UserEntity user = userRepository.findByKeycloakId(keycloakId)
+            .orElseGet(UserEntity::new);
+        if (user.getBirthDate() != null) {
+            return;
+        }
+
+        boolean isNewUser = user.getId() == null;
+        user.setKeycloakId(keycloakId);
+        user.setName(username);
+        user.setBirthDate(birthDate);
+        if (isNewUser) {
+            user.setIsActive(true);
+            user.setPocket(NEW_USER_BUDGET);
+        }
+        userRepository.save(user);
+    }
+
     private UserWithOrdersResponse toUserWithOrdersResponse(UserEntity user) {
         List<OrderResponse> orders = user.getOrders().stream()
             .map(this::toOrderResponse)
@@ -45,7 +77,7 @@ public class UserService {
             user.getId(),
             user.getName(),
             user.getIsActive(),
-            user.getIsAdult(),
+            isAdult(user),
             user.getPocket(),
             orders
         );
@@ -68,8 +100,13 @@ public class UserService {
             user.getId(),
             user.getName(),
             user.getIsActive(),
-            user.getIsAdult(),
+            isAdult(user),
             user.getPocket()
         );
+    }
+
+    private boolean isAdult(UserEntity user) {
+        LocalDate birthDate = user.getBirthDate();
+        return birthDate != null && !birthDate.isAfter(LocalDate.now().minusYears(18));
     }
 }

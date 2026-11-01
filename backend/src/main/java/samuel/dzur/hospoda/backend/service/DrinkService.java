@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import samuel.dzur.hospoda.backend.api.responses.DrinkResponse;
 import samuel.dzur.hospoda.backend.repository.DrinkRepository;
 import samuel.dzur.hospoda.backend.repository.entity.DrinkEntity;
-import samuel.dzur.hospoda.backend.repository.entity.PriceRecordEntity;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -75,9 +74,9 @@ public class DrinkService {
     private BigDecimal getCurrentPrice(DrinkEntity drink) {
         return drink.getPriceRecords().stream()
                 .findFirst()
-                .map(PriceRecordEntity::getPrice)
                 .orElseThrow(() -> new IllegalStateException(
                         "Drink " + drink.getId() + " has no price records"
-                ));
+                ))
+                .getPrice();
     }
 }

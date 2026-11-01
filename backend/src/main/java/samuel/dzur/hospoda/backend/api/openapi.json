@@ -11,6 +11,57 @@
     }
   ],
   "paths": {
+    "/users/registration": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getRegistrationStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationStatusResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "completeRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteRegistrationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/users": {
       "get": {
         "tags": [
@@ -214,6 +265,15 @@
   },
   "components": {
     "schemas": {
+      "CompleteRegistrationRequest": {
+        "type": "object",
+        "properties": {
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
       "UserResponse": {
         "type": "object",
         "properties": {
@@ -278,6 +338,14 @@
             "items": {
               "$ref": "#/components/schemas/OrderResponse"
             }
+          }
+        }
+      },
+      "RegistrationStatusResponse": {
+        "type": "object",
+        "properties": {
+          "completed": {
+            "type": "boolean"
           }
         }
       },
@@ -351,6 +419,13 @@
             "type": "number"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

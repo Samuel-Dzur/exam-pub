@@ -2,8 +2,6 @@ import Image from "next/image";
 import styles from "./bar.module.css";
 import AccountInfo from "@/components/account-info";
 
-export const instant = false;
-
 export default function BarPage() {
   return (
     <main className={styles.page}>

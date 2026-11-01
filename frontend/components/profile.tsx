@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CircleUserRound, LogOut, UserRound } from "lucide-react";
+import {
+  CircleUserRound,
+  LogOut,
+  ReceiptText,
+  UserRound,
+} from "lucide-react";
 import { useAuth } from "@/app/auth-provider";
 import LogoutDialog from "@/components/logout-dialog";
 import styles from "./account-info.module.css";
@@ -69,6 +74,15 @@ export default function Profile() {
             >
               <UserRound size={18} aria-hidden="true" />
               <span>Profil</span>
+            </Link>
+            <Link
+              className={styles.profileMenuItem}
+              href="/orders"
+              role="menuitem"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <ReceiptText size={18} aria-hidden="true" />
+              <span>Moje objednávky</span>
             </Link>
             <button
               className={styles.profileMenuItem}

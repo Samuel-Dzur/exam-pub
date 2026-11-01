@@ -1,0 +1,106 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  align-content: center;
+  justify-items: center;
+  padding: 48px 24px;
+  background: var(--paper);
+}
+
+.card {
+  width: min(100%, 760px);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card h1 {
+  margin: 0 0 32px;
+  font-family: Baskerville, "Times New Roman", serif;
+  font-size: clamp(32px, 5vw, 42px);
+  font-weight: 400;
+}
+
+.orderList {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.order h2 {
+  margin: 0 0 4px;
+  font-family: Baskerville, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.order p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.order strong {
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.status,
+.error {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.status {
+  color: var(--muted);
+}
+
+.error {
+  color: #8b382b;
+}
+
+.backLink {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  padding: 0 20px;
+  border-radius: 6px;
+  background: var(--green);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  background: var(--green-dark);
+}
+
+.backLink:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .order {
+    align-items: flex-start;
+  }
+}

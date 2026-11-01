@@ -46,6 +46,7 @@ public class SummaryController {
 
     @GetMapping("/product/{productId}")
     @BartenderAccess
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<ProductOrderSummaryResponse>> getOrdersByProductId(
             @PathVariable Long productId
     ) {

@@ -115,9 +115,9 @@ export type BuyData = {
 
 export type BuyResponses = {
     /**
-     * OK
+     * Purchase created
      */
-    200: BuyResponse;
+    201: BuyResponse;
 };
 
 export type BuyResponse2 = BuyResponses[keyof BuyResponses];

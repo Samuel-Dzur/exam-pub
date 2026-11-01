@@ -2,8 +2,11 @@ package samuel.dzur.hospoda.backend.api.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,11 @@ public class CheckoutController {
     @PostMapping("/buy")
     @CustomerAccess
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(
+        responseCode = "201",
+        description = "Purchase created",
+        content = @Content(schema = @Schema(implementation = BuyResponse.class))
+    )
     public ResponseEntity<BuyResponse> buy(
         @AuthenticationPrincipal Jwt jwt,
         @Valid @RequestBody BuyRequest request

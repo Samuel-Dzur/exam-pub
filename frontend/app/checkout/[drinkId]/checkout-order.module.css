@@ -1,0 +1,173 @@
+.orderAction {
+  display: flex;
+  min-width: 180px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.quantityLabel {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.quantityControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+}
+
+.quantityButton {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--green);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.quantityButton:hover:not(:disabled) {
+  background: var(--green);
+  color: #fff;
+}
+
+.quantityButton:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.quantityButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.quantityInput {
+  width: 52px;
+  height: 36px;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.quantityInput:focus-visible {
+  border-color: var(--green);
+  outline: 2px solid rgb(36 77 58 / 20%);
+  outline-offset: 2px;
+}
+
+.quantityError {
+  margin: 0;
+  color: #8b382b;
+  font-size: 13px;
+}
+
+.total {
+  margin: 0;
+  color: var(--green);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.balanceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.balanceLabel {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.balanceCalculation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.balanceOperator {
+  color: var(--muted);
+}
+
+.balanceCalculation strong {
+  color: inherit;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.balanceCalculation strong.negativeBalance {
+  color: #8b382b;
+}
+
+.balanceStatus,
+.balanceError {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.balanceStatus {
+  color: var(--muted);
+}
+
+.balanceError {
+  color: #8b382b;
+}
+
+.orderSummary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.orderButton.orderButton {
+  min-width: 160px;
+  margin-top: 16px;
+}
+
+.purchaseSuccess,
+.purchaseError {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.purchaseSuccess {
+  color: var(--green);
+}
+
+.purchaseError {
+  color: #8b382b;
+}
+
+@media (max-width: 700px) {
+  .orderAction {
+    width: 100%;
+  }
+}

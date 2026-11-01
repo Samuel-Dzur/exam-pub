@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ImageOff, LoaderCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getDrinkImage, getDrinkMenu } from "@/lib/api/generated/sdk.gen";
 import type { DrinkResponse } from "@/lib/api/generated/types.gen";
 import { throwApiError } from "@/lib/api/errors";
@@ -31,6 +32,7 @@ export default function DrinkMenu({
   onDrinkClick,
   showOrderButtons = true,
 }: DrinkMenuProps) {
+  const router = useRouter();
   const [drinks, setDrinks] = useState<DrinkResponse[]>([]);
   const [images, setImages] = useState<Map<number, DrinkImage>>(() => new Map());
   const [status, setStatus] = useState<MenuStatus>("loading");
@@ -205,7 +207,13 @@ export default function DrinkMenu({
               <li
                 className={styles.card}
                 key={drink.id ?? `${name}-${index}`}
-                onClick={onDrinkClick}
+                onClick={() => {
+                  if (onDrinkClick) {
+                    onDrinkClick();
+                  } else if (showOrderButtons && typeof drink.id === "number") {
+                    router.push(`/checkout/${drink.id}`);
+                  }
+                }}
                 onKeyDown={(event) => {
                   if (
                     onDrinkClick &&
